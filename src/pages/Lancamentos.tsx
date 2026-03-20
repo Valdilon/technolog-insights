@@ -40,6 +40,8 @@ export default function Lancamentos() {
     return data.filter(item => {
       if (tipoFilter !== 'TODOS' && item.tipo !== tipoFilter) return false;
       if (mesFilter !== 'TODOS' && item.mesAno !== mesFilter) return false;
+      if (empresaFilter !== 'TODOS' && item.empresa !== empresaFilter) return false;
+      if (grupoFilter !== 'TODOS' && item.grupoGerencial !== grupoFilter) return false;
       if (search) {
         const q = search.toLowerCase();
         return item.historico.toLowerCase().includes(q) ||
