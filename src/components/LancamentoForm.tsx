@@ -50,7 +50,7 @@ export function LancamentoForm({ open, onClose, onSave, initial }: Props) {
   });
 
   const handleSubmit = (values: FormValues) => {
-    onSave(values);
+    onSave(values as Omit<Lancamento, 'id' | 'mesAno'>);
     onClose();
   };
 
