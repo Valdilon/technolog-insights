@@ -15,6 +15,8 @@ export default function Lancamentos() {
   const [search, setSearch] = useState('');
   const [tipoFilter, setTipoFilter] = useState<string>('TODOS');
   const [mesFilter, setMesFilter] = useState<string>('TODOS');
+  const [empresaFilter, setEmpresaFilter] = useState<string>('TODOS');
+  const [grupoFilter, setGrupoFilter] = useState<string>('TODOS');
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Lancamento | null>(null);
 
