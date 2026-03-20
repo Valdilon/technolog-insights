@@ -62,7 +62,7 @@ export function FinancialProvider({ children }: { children: React.ReactNode }) {
   }, [data, persist]);
 
   return (
-    <FinancialContext.Provider value={{ data, setData, addLancamento, updateLancamento, deleteLancamento, importData }}>
+    <FinancialContext.Provider value={{ data, setData, addLancamento, updateLancamento, deleteLancamento, importData, loading }}>
       {children}
     </FinancialContext.Provider>
   );
