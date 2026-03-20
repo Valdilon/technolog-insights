@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import type { Lancamento } from '@/types/financial';
 
 interface FinancialContextType {
@@ -8,17 +8,36 @@ interface FinancialContextType {
   updateLancamento: (id: string, l: Partial<Lancamento>) => void;
   deleteLancamento: (id: string) => void;
   importData: (rows: Lancamento[]) => void;
+  loading: boolean;
 }
 
 const FinancialContext = createContext<FinancialContextType | null>(null);
 
 export function FinancialProvider({ children }: { children: React.ReactNode }) {
-  const [data, setData] = useState<Lancamento[]>(() => {
-    try {
-      const saved = localStorage.getItem('technolog_data');
-      return saved ? JSON.parse(saved) : [];
-    } catch { return []; }
-  });
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<Lancamento[]>([]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('technolog_data');
+    if (saved) {
+      try {
+        setData(JSON.parse(saved));
+        setLoading(false);
+        return;
+      } catch {}
+    }
+    // Auto-load seed data
+    fetch('/seed-data.json')
+      .then(r => r.ok ? r.json() : [])
+      .then((rows: Lancamento[]) => {
+        if (rows.length) {
+          setData(rows);
+          localStorage.setItem('technolog_data', JSON.stringify(rows));
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   const persist = useCallback((newData: Lancamento[]) => {
     setData(newData);
