@@ -20,9 +20,20 @@ export default function Lancamentos() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Lancamento | null>(null);
 
-  const meses = useMemo(() => {
-    const s = new Set(data.map(d => d.mesAno).filter(Boolean));
-    return Array.from(s).sort();
+  const { meses, empresas, grupos } = useMemo(() => {
+    const mSet = new Set<string>();
+    const eSet = new Set<string>();
+    const gSet = new Set<string>();
+    for (const d of data) {
+      if (d.mesAno) mSet.add(d.mesAno);
+      if (d.empresa) eSet.add(d.empresa);
+      if (d.grupoGerencial) gSet.add(d.grupoGerencial);
+    }
+    return {
+      meses: Array.from(mSet).sort(),
+      empresas: Array.from(eSet).sort(),
+      grupos: Array.from(gSet).sort(),
+    };
   }, [data]);
 
   const filtered = useMemo(() => {
