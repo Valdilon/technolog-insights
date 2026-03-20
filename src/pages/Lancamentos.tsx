@@ -15,18 +15,33 @@ export default function Lancamentos() {
   const [search, setSearch] = useState('');
   const [tipoFilter, setTipoFilter] = useState<string>('TODOS');
   const [mesFilter, setMesFilter] = useState<string>('TODOS');
+  const [empresaFilter, setEmpresaFilter] = useState<string>('TODOS');
+  const [grupoFilter, setGrupoFilter] = useState<string>('TODOS');
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Lancamento | null>(null);
 
-  const meses = useMemo(() => {
-    const s = new Set(data.map(d => d.mesAno).filter(Boolean));
-    return Array.from(s).sort();
+  const { meses, empresas, grupos } = useMemo(() => {
+    const mSet = new Set<string>();
+    const eSet = new Set<string>();
+    const gSet = new Set<string>();
+    for (const d of data) {
+      if (d.mesAno) mSet.add(d.mesAno);
+      if (d.empresa) eSet.add(d.empresa);
+      if (d.grupoGerencial) gSet.add(d.grupoGerencial);
+    }
+    return {
+      meses: Array.from(mSet).sort(),
+      empresas: Array.from(eSet).sort(),
+      grupos: Array.from(gSet).sort(),
+    };
   }, [data]);
 
   const filtered = useMemo(() => {
     return data.filter(item => {
       if (tipoFilter !== 'TODOS' && item.tipo !== tipoFilter) return false;
       if (mesFilter !== 'TODOS' && item.mesAno !== mesFilter) return false;
+      if (empresaFilter !== 'TODOS' && item.empresa !== empresaFilter) return false;
+      if (grupoFilter !== 'TODOS' && item.grupoGerencial !== grupoFilter) return false;
       if (search) {
         const q = search.toLowerCase();
         return item.historico.toLowerCase().includes(q) ||
@@ -104,6 +119,20 @@ export default function Lancamentos() {
           <SelectContent>
             <SelectItem value="TODOS">Todos meses</SelectItem>
             {meses.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={empresaFilter} onValueChange={setEmpresaFilter}>
+          <SelectTrigger className="w-[150px]"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="TODOS">Todas empresas</SelectItem>
+            {empresas.map(e => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={grupoFilter} onValueChange={setGrupoFilter}>
+          <SelectTrigger className="w-[170px]"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="TODOS">Todos grupos</SelectItem>
+            {grupos.map(g => <SelectItem key={g} value={g}>{g.replace(/_/g, ' ')}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>
